@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run build-umd & npm run build-esm",
+    "build-umd": "npx webpack --config webpack-umd.config.js",
+    "build-esm": "npx webpack --config webpack-esm.config.mjs"
+  },
+  "dependencies": {
+    "webpack": "^5.75.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.0.1"
+  }
+}
