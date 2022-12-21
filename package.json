@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "build": "npm run build-umd & npm run build-esm",
     "build-umd": "npx webpack --config webpack-umd.config.js",
