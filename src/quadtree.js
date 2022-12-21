@@ -158,9 +158,9 @@ Quadtree.prototype.removePreserve = function (item) {
   itemNodeChildren[i] = itemNodeChildren[itemNodeChildren.length - 1];
   itemNodeChildren.pop();
 
-  // cleanup
   if (this.nodes.length !== 0) { return; }
-  // Assign alias now since above clause is true most cases
+
+  // cleanup
   const nodes = this.nodes;
   const itemCount = nodes[0].children.length + nodes[1].children.length + nodes[2].children.length + nodes[3].children.length;
 
@@ -208,35 +208,7 @@ Quadtree.prototype.query = function (x1, y1, x2, y2, callback) {
 
   let i = children.length;
   while (i--) {
-    const childBound = children[i]._qtree_bbox;
-    if (!isNotIntersectingBound(childBound.x1, childBound.y1, childBound.x2, childBound.y2, x1, y1, x2, y2)) { callback(children[i]); }
-  }
-
-  if (nodes.length === 0) { return; }
-
-  nodes[0].query(x1, y1, x2, y2, callback);
-  nodes[1].query(x1, y1, x2, y2, callback);
-  nodes[2].query(x1, y1, x2, y2, callback);
-  nodes[3].query(x1, y1, x2, y2, callback);
-}
-
-/**
- * @param {Number} x1
- * @param {Number} y1
- * @param {Number} x2
- * @param {Number} y2
- * @param {Function} predicate - item passed to callback if true
- * @param {Function} callback
- */
-Quadtree.prototype.queryPredicate = function (x1, y1, x2, y2, predicate, callback) {
-  if (isNotIntersectingBound(this.x1, this.y1, this.x2, this.y2, x1, y1, x2, y2)) { return; }
-
-  const children = this.children;
-  const nodes = this.nodes;
-
-  let i = children.length;
-  while (i--) {
-    if (predicate(children[i])) { callback(children[i]); }
+    if (callback(children[i])) { return; }
   }
 
   if (nodes.length === 0) { return; }

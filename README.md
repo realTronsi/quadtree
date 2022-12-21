@@ -70,7 +70,7 @@ Insert item into quadtree.
 
 - `@param {Object} item` - item to insert; AABB retrieved from `._qtree_bbox` property
 
-> Note: If you wish to use a different property name, search and replace all instances of `_qtree_bbox` with your desired name and [build](#build)
+> Note: If you wish to use a different property name, search and replace all instances of `_qtree_bbox` in the source with your desired name
 
 ```js
 const item = {
@@ -115,48 +115,42 @@ quadtree.removePreserve(item);
 
 <a name="quadtree_query" href="#quadtree_query">></a> *quadtree*.**query**(*x1, y1, x2, y2, callback*)
 
-Retrieve all items that intersect with the query bounds.
+Retrieve all **candidate** items that intersect with query bounds.
 
 - `@param {Number} x1` - x coordinate of top left corner of query bounds
 - `@param {Number} y1` - y coordinate of top left corner of query bounds
 - `@param {Number} x2` - x coordinate of bottom right corner of query bounds
 - `@param {Number} y2` - y coordinate of bottom right corner of query bounds
-- `@param {Function} callback` - Called as `callback(item)` for every item that fufills the query
+- `@param {Function} callback` - Called as `callback(item)` for every candidate item
+
+> If the callback returns `true`, the query is stopped. This can be used to stop the loop after a desired candidate has been reached.
 
 ```js
-quadtree.query(0, 0, 100, 100, item => {
-  console.log(item);
+const query = {
+  x1: 0, y1: 0,
+  x2: 100, y2: 100
+};
+
+quadtree.query(query.x1, query.y1, query.x2, query.y2, item => {
+  // Return if candidate is not intersecting query bounds
+  if (!boundingBoxIntersect(query, item._qtree_bbox)) return;
+  // Do stuff with item...
+  
+  // Breaks out of the query if item id is 1
+  if (item.id === 1) return true;
 });
 ```
 
-<hr>
+For complex collisions, it is still recommended to perform the bounding box intersection check as it is computionally cheap.
 
-<a name="quadtree_queryPredicate" href="#quadtree_queryPredicate">></a> *quadtree*.**queryPredicate**(*x1, y1, x2, y2, predicate, callback*)
-
-Retrieve all items that intersect with the query bounds and fufills the predicate condition.
-
-- `@param {Number} x1` - x coordinate of top left corner of query bounds
-- `@param {Number} y1` - y coordinate of top left corner of query bounds
-- `@param {Number} x2` - x coordinate of bottom right corner of query bounds
-- `@param {Number} y2` - y coordinate of bottom right corner of query bounds
-- `@param {Function} predicate` - Called as `predicate(item)`, item is passed to callback if predicate returns true
-- `@param {Function} callback` - Called as `callback(item)` for every item that fufills the query and predicate
-
+Circle collision example:
 ```js
-const circle = {
-  x: 0,
-  y: 0,
-  r: 50
-}
-
-quadtree.queryPredicate(circle.x, circle.y, circle.r, circle.r,
-  item => {
-    if (!boundingBoxCollision(item, circle)) return false;
-    return (circle.x - item.x) ** 2 + (circle.y - item.y) ** 2 <= circle.r ** 2;
-  },
-  item => {
-    console.log(item);
-  });
+quadtree.query(..., item => {
+  if (!boundingBoxIntersect(query, item._qtree_bbox)) return;
+  const dist = (circle.x - itemBound.x) ** 2 + (circle.y - itemBound.y) ** 2;
+  if (dist > circle.r ** 2) return;
+  // Item and circle are intersecting
+});
 ```
 
 <hr>
