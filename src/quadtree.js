@@ -1,4 +1,4 @@
-"use-strict";
+"use-strict"
 
 /**
  * Fast quadtree implementation
@@ -65,11 +65,11 @@ Quadtree.prototype.getBoundQuadrant = function (bound) {
 
 /**
  * @param {Object} item
- * bounds need to be assigned to item._qtree_bbox
+ * bounds need to be assigned to item.bound
  */
 Quadtree.prototype.push = function (item) {
   // Get quadrant of item, -1 denotes the item cannot fit in a quad
-  const quadrant = this.getBoundQuadrant(item._qtree_bbox);
+  const quadrant = this.getBoundQuadrant(item.bound);
 
   if (quadrant !== -1) { return this.nodes[quadrant].push(item); }
 
@@ -105,7 +105,7 @@ Quadtree.prototype.push = function (item) {
   while (--i) {
     // Rebalance all children
     const child = children[i];
-    const childQuadrant = this.getBoundQuadrant(child._qtree_bbox);
+    const childQuadrant = this.getBoundQuadrant(child.bound);
 
     if (childQuadrant !== -1) {
       this.nodes[childQuadrant].push(child);

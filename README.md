@@ -68,13 +68,13 @@ const quadtree = new Quadtree(0, 0, 1000, 1000, 10, 5);
 
 Insert item into quadtree.
 
-- `@param {Object} item` - item to insert; AABB retrieved from `._qtree_bbox` property
+- `@param {Object} item` - item to insert; AABB retrieved from `.bound` property
 
-> Note: If you wish to use a different property name, search and replace all instances of `_qtree_bbox` in the source with your desired name
+> Note: If you wish to use a different property name, search and replace all instances of `.bound` in the source with your desired name
 
 ```js
 const item = {
-  _qtree_bbox: {
+  bound: {
     x1: 0,
     y1: 0,
     x2: 100,
@@ -133,7 +133,7 @@ const query = {
 
 quadtree.query(query.x1, query.y1, query.x2, query.y2, item => {
   // Return if candidate is not intersecting query bounds
-  if (!boundingBoxIntersect(query, item._qtree_bbox)) return;
+  if (!boundingBoxIntersect(query, item.bound)) return;
   // Do stuff with item...
   
   // Breaks out of the query if item id is 1
@@ -143,10 +143,10 @@ quadtree.query(query.x1, query.y1, query.x2, query.y2, item => {
 
 For complex collisions, it is still recommended to perform the bounding box intersection check as it is computionally cheap.
 
-Circle collision example:
+Circle-circle collision example:
 ```js
 quadtree.query(..., item => {
-  if (!boundingBoxIntersect(query, item._qtree_bbox)) return;
+  if (!boundingBoxIntersect(query, item.bound)) return;
   const dist = (circle.x - itemBound.x) ** 2 + (circle.y - itemBound.y) ** 2;
   if (dist > circle.r ** 2) return;
   // Item and circle are intersecting
@@ -160,7 +160,7 @@ quadtree.query(..., item => {
 Remove and re-insert the item
 
 ```js
-item._qtree_bbox.x1 += 5;
+item.bound.x1 += 5;
 
 quadtree.remove(item);
 quadtree.push(item);
@@ -170,7 +170,7 @@ If objects are frequently being updated, then consider rebuilding the entire qua
 
 ```js
 for (let item of items) {
-  item._qtree_bbox.x1 += 5;
+  item.bound.x1 += 5;
 }
 
 quadtree.clear();
