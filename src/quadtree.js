@@ -45,7 +45,7 @@ Quadtree.prototype.getBoundQuadrant = function (bound) {
     if (bound.x2 < this.mx && bound.x1 > this.x1) {
       return 0;
     }
-    if (bound.x1 > this.my && bound.x2 < this.x2) {
+    if (bound.x1 > this.mx && bound.x2 < this.x2) {
       return 1;
     }
   }
@@ -54,7 +54,7 @@ Quadtree.prototype.getBoundQuadrant = function (bound) {
     if (bound.x2 < this.mx && bound.x1 > this.x1) {
       return 2;
     }
-    if (bound.x1 > this.my && bound.x2 < this.x2) {
+    if (bound.x1 > this.mx && bound.x2 < this.x2) {
       return 3;
     }
   }
