@@ -1,3 +1,5 @@
+"use-strict";
+
 /**
  * Fast quadtree implementation
  * Utilizes one node per item strategy
@@ -16,7 +18,7 @@
  * @param {Number} maxDepth
  * @param {Quadtree} parent - Will never be used user-end
  */
- export default function Quadtree (x1, y1, x2, y2, maxChildren, maxDepth, parent) {
+export default function Quadtree (x1, y1, x2, y2, maxChildren, maxDepth, parent) {
   this.x1 = x1;
   this.y1 = y1;
   this.x2 = x2;
