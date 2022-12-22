@@ -49,7 +49,7 @@ All AABBs are defined by the top left and bottom right coordinates (x1, y1), (x2
 
 <a name="quadtree_constructor" href="#quadtree_constructor">></a> *Quadtree*(*x1, y1, x2, y2, maxChildren, maxDepth*)
 
-Constructor
+Constructor.
 
 - `@param {Number} x1` - x coordinate of top left corner of quadtree
 - `@param {Number} y1` - y coordinate of top left corner of quadtree
@@ -91,7 +91,7 @@ quadtree.push(item);
 
 Remove item from quadtree.
 
-- `@param {Object} item` - item to remove; Item must be in a quadtree, as the `._qtree_node` accessor is needed to determine item location
+- `@param {Object} item` - item to remove; Item must currently be in a quadtree
 
 ```js
 quadtree.remove(item);
@@ -103,7 +103,7 @@ quadtree.remove(item);
 
 Remove item from quadtree while preserving tree structure.
 
-- `@param {Object} item` - item to remove; Item must be in a quadtree, as the `._qtree_node` accessor is needed to determine item location
+- `@param {Object} item` - item to remove; Item must currently be in a quadtree
 
 > More expensive than `.remove()` but could lead to higher quality trees for querying
 
@@ -115,13 +115,13 @@ quadtree.removePreserve(item);
 
 <a name="quadtree_query" href="#quadtree_query">></a> *quadtree*.**query**(*x1, y1, x2, y2, callback*)
 
-Retrieve all **candidate** items that intersect with query bounds.
+Retrieve all ***candidate*** items for the given query bounds
 
 - `@param {Number} x1` - x coordinate of top left corner of query bounds
 - `@param {Number} y1` - y coordinate of top left corner of query bounds
 - `@param {Number} x2` - x coordinate of bottom right corner of query bounds
 - `@param {Number} y2` - y coordinate of bottom right corner of query bounds
-- `@param {Function} callback` - Called as `callback(item)` for every candidate item
+- `@param {Function} callback` - Called as `callback(item)` for every candidate
 
 > If the callback returns `true`, the query is stopped. This can be used to stop the loop after a desired candidate has been reached.
 
@@ -147,7 +147,7 @@ Circle-circle collision example:
 ```js
 quadtree.query(..., item => {
   if (!boundingBoxIntersect(query, item.bound)) return;
-  const dist = (circle.x - itemBound.x) ** 2 + (circle.y - itemBound.y) ** 2;
+  const dist = (circle.x - item.x) ** 2 + (circle.y - item.y) ** 2;
   if (dist > circle.r ** 2) return;
   // Item and circle are intersecting
 });
@@ -171,6 +171,7 @@ If objects are frequently being updated, then consider rebuilding the entire qua
 ```js
 for (let item of items) {
   item.bound.x1 += 5;
+  item.bound.x2 += 5;
 }
 
 quadtree.clear();
@@ -191,7 +192,3 @@ Install dependencies
 Build
 
 2) `npm run build`
-
-<hr>
-
-###### Archived link: https://javascriptcompressor.com/
