@@ -42,24 +42,16 @@ export default class Quadtree {
    * @return index of node for corresponding quadrant
    */
   getBoundQuadrant (bound) {
-    if (this.nodes.length === 0) { return -1; }
+    if (this.nodes.length === 0) return -1;
     // top
     if (bound.y2 < this.my && bound.y1 > this.y1) {
-      if (bound.x2 < this.mx && bound.x1 > this.x1) {
-        return 0;
-      }
-      if (bound.x1 > this.mx && bound.x2 < this.x2) {
-        return 1;
-      }
+      if (bound.x2 < this.mx && bound.x1 > this.x1) return 0;
+      if (bound.x1 > this.mx && bound.x2 < this.x2) return 1;
     }
     // bottom
     if (bound.y1 > this.my && bound.y2 < this.y2) {
-      if (bound.x2 < this.mx && bound.x1 > this.x1) {
-        return 2;
-      }
-      if (bound.x1 > this.mx && bound.x2 < this.x2) {
-        return 3;
-      }
+      if (bound.x2 < this.mx && bound.x1 > this.x1) return 2;
+      if (bound.x1 > this.mx && bound.x2 < this.x2) return 3;
     }
     return -1;
   }
@@ -72,12 +64,12 @@ export default class Quadtree {
     // Get quadrant of item, -1 denotes the item cannot fit in a quad
     const quadrant = this.getBoundQuadrant(item.bound);
   
-    if (quadrant !== -1) { return this.nodes[quadrant].push(item); }
+    if (quadrant !== -1) return this.nodes[quadrant].push(item);
   
     this.children.push(item);
     item._qtree_node = this;
   
-    if (this.nodes.length !== 0 || this.depth === 0 || this.children.length <= this.maxChildren) { return; }
+    if (this.nodes.length !== 0 || this.depth === 0 || this.children.length <= this.maxChildren) return;
   
     /* subdivision */
     // nw, ne, sw, se
@@ -132,7 +124,7 @@ export default class Quadtree {
     itemNodeChildren[i] = itemNodeChildren[itemNodeChildren.length - 1];
     itemNodeChildren.pop();
   
-    if (this.nodes.length !== 0) { return; }
+    if (this.nodes.length !== 0) return;
     
     this.parent.clean();
   }
@@ -142,10 +134,10 @@ export default class Quadtree {
    */
   clean () {
     const nodes = this.nodes;
-    if (nodes[0].children.length > 0) { return; }
-    if (nodes[1].children.length > 0) { return; }
-    if (nodes[2].children.length > 0) { return; }
-    if (nodes[3].children.length > 0) { return; }
+    if (nodes[0].children.length > 0) return;
+    if (nodes[1].children.length > 0) return;
+    if (nodes[2].children.length > 0) return;
+    if (nodes[3].children.length > 0) return;
   
     this.nodes = [];
     this.parent.clean();
@@ -161,13 +153,13 @@ export default class Quadtree {
     itemNodeChildren[i] = itemNodeChildren[itemNodeChildren.length - 1];
     itemNodeChildren.pop();
   
-    if (this.nodes.length !== 0) { return; }
+    if (this.nodes.length !== 0) return;
   
     // cleanup
     const nodes = this.nodes;
     const itemCount = nodes[0].children.length + nodes[1].children.length + nodes[2].children.length + nodes[3].children.length;
   
-    if (itemCount <= this.maxChildren) { return; }
+    if (itemCount <= this.maxChildren) return;
   
     const nwChildren = nodes[0].children;
     i = nwChildren.length;
@@ -204,17 +196,17 @@ export default class Quadtree {
    * @param {Function} callback
    */
   query (x1, y1, x2, y2, callback) {
-    if (isNotIntersectingBound(this.x1, this.y1, this.x2, this.y2, x1, y1, x2, y2)) { return; }
+    if (isNotIntersectingBound(this.x1, this.y1, this.x2, this.y2, x1, y1, x2, y2)) return;
   
     const children = this.children;
     const nodes = this.nodes;
   
     let i = children.length;
     while (i--) {
-      if (callback(children[i])) { return; }
+      if (callback(children[i])) return;
     }
   
-    if (nodes.length === 0) { return; }
+    if (nodes.length === 0) return;
   
     nodes[0].query(x1, y1, x2, y2, callback);
     nodes[1].query(x1, y1, x2, y2, callback);
