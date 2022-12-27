@@ -119,12 +119,15 @@ export default class Quadtree {
    * @param {Object} item
    */
   remove (item) {
-    const itemNodeChildren = item._qtree_node.children;
+    const itemNode = item._qtree_node;
+    if (this !== itemNode) return itemNode.remove(item);
+
+    const itemNodeChildren = itemNode.children;
     const i = itemNodeChildren.indexOf(item);
     itemNodeChildren[i] = itemNodeChildren[itemNodeChildren.length - 1];
     itemNodeChildren.pop();
   
-    if (this.nodes.length !== 0) return;
+    if (this.parent === undefined) return;
     
     this.parent.clean();
   }
@@ -134,12 +137,16 @@ export default class Quadtree {
    */
   clean () {
     const nodes = this.nodes;
+    if (nodes.length === 0) return;
     if (nodes[0].children.length > 0) return;
     if (nodes[1].children.length > 0) return;
     if (nodes[2].children.length > 0) return;
     if (nodes[3].children.length > 0) return;
   
     this.nodes = [];
+    
+    if (this.parent === undefined) return;
+    
     this.parent.clean();
   }
   
@@ -148,44 +155,64 @@ export default class Quadtree {
    * @param {Object} item
    */
   removePreserve (item) {
-    const itemNodeChildren = item._qtree_node.children;
+    const itemNode = item._qtree_node;
+    if (this !== itemNode) return itemNode.removePreserve(item);
+
+    const itemNodeChildren = itemNode.children;
     let i = itemNodeChildren.indexOf(item);
     itemNodeChildren[i] = itemNodeChildren[itemNodeChildren.length - 1];
     itemNodeChildren.pop();
   
-    if (this.nodes.length !== 0) return;
-  
-    // cleanup
+    if (this.parent === undefined) return;
+    
+    this.parent.cleanPreserve();
+  }
+
+  cleanPreserve () {
     const nodes = this.nodes;
-    const itemCount = nodes[0].children.length + nodes[1].children.length + nodes[2].children.length + nodes[3].children.length;
+    if (nodes.length === 0) return;
+
+    const itemCount = this.getChildrenCount();
   
-    if (itemCount <= this.maxChildren) return;
+    if (itemCount > this.maxChildren) return;
   
     const nwChildren = nodes[0].children;
-    i = nwChildren.length;
-    while (--i) {
+    let i = nwChildren.length;
+    while (i--) {
       this.children.push(nwChildren[i]);
     }
   
     const neChildren = nodes[1].children;
     i = neChildren.length;
-    while (--i) {
+    while (i--) {
       this.children.push(neChildren[i]);
     }
   
     const swChildren = nodes[2].children;
     i = swChildren.length;
-    while (--i) {
+    while (i--) {
       this.children.push(swChildren[i]);
     }
   
     const seChildren = nodes[3].children;
     i = seChildren.length;
-    while (--i) {
+    while (i--) {
       this.children.push(seChildren[i]);
     }
   
     this.nodes = [];
+
+    if (this.parent === null) return;
+    
+    this.parent.cleanPreserve();
+  }
+
+  getChildrenCount () {
+    let count = this.children.length;
+    if (this.nodes.length !== 0) {
+      count += this.nodes[1].getChildrenCount() + this.nodes[0].getChildrenCount() + this.nodes[2].getChildrenCount() + this.nodes[3].getChildrenCount();
+    }
+    return count;
   }
 
   /**
